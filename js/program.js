@@ -1,13 +1,13 @@
 function logout() {
     localStorage.clear();
-    window.location.replace("http://127.0.0.1:5500/html/login.html");
+    window.location.href ='login.html';
 }
 
 $(function () {
         // localStorage.clear();
 
     if (!isLogin()) {
-        window.location.replace("http://127.0.0.1:5500/html/login.html");
+        window.location.href ='login.html';
     }
 
     $(".header").load("header.html", function () {
@@ -20,7 +20,6 @@ $(function () {
 function isLogin() {
 
     if (localStorage.getItem("token")) {
-        console.log(localStorage.getItem("token"));
         return true;
     }
     return false;
@@ -47,7 +46,7 @@ var maxCreateDate = "";
 
 function getListDepartments() {
 
-    var url = "http://localhost:8888/api/v1/department/search";
+    var url = "https://60c87a5bafc88600179f724e.mockapi.io/api/v1/department";
 
     // url += "?page=" + currentPage + "&size=" + size;
 
@@ -69,31 +68,31 @@ function getListDepartments() {
     // call API from server
     $.ajax({
         url: url,
-        type: 'POST',
+        type: 'GET',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        // contentType: "application/json",
-        // dataType: 'json', // datatype return
-        data: JSON.stringify({"deleted": 0,
-            "pageNumber": 0,
-            "sortType":"ASC",
-            "pageSize": 5,
-            "params": [
-              {
-                "property": "textual",
-                "value": ""
-              }
-            ]
-            }) ,
+        contentType: "application/json",
+        dataType: 'json', // datatype return
+        // data: JSON.stringify({"deleted": 0,
+        //     "pageNumber": 0,
+        //     "sortType":"ASC",
+        //     "pageSize": 5,
+        //     "params": [
+        //       {
+        //         "property": "textual",
+        //         "value": ""
+        //       }
+        //     ]
+        //     }) ,
         beforeSend: function (xhr) {
             xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
         },
         success: function (data, textStatus, xhr) {
             // reset list employees
             departments = [];
-            departments = data.content;
+            departments = data;
             fillDepartmentToTable();
             resetDeleteCheckbox();
             pagingTable(data.totalPages);
@@ -279,12 +278,13 @@ function refreshTable() {
 }
 
 function fillDepartmentToTable() {
+    // console.log(departments);
     departments.forEach(function (item, index) {
         $('tbody').append(
             '<tr>' +
             '<td><input id="checkbox-' + index + '" type="checkbox" onClick="onChangeCheckboxItem()"></td>' +
             '<td>' + item.name + '</td>' +
-            '<td>' + item.author.fullName + '</td>' +
+            '<td>' + item.fullName + '</td>' +
             '<td>' + item.createDate + '</td>' +
             '<td>' +
             '<a class="edit" title="Edit" data-toggle="tooltip" onclick="openUpdateModal(' + item.id + ')"><i class="material-icons">&#xE254;</i></a>' +

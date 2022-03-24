@@ -30,32 +30,31 @@ function login() {
 
     // Call API
     $.ajax({
-        url: 'http://localhost:8888/api/v1/user/login' + "?username=" + username + "&password=" +  password,
+        url: 'https://reqres.in/api/login',
         type: 'POST',
         contentType: "application/json",
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
         },
         dataType: 'json', // datatype return
         // beforeSend: function (xhr) {
         //     xhr.setRequestHeader("Authorization", "Bearer " + btoa(username + ":" + password));
         // },
+        data: JSON.stringify({
+            "email": username,
+            "password": password
+        }),
         success: function (data, textStatus, xhr) {
             console.log("data: " , data)
-            // save data to storage
-            // https://www.w3schools.com/html/html5_webstorage.asp
             localStorage.setItem("token", data.token);
 
-            
-            // redirect to home page
-            // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
-
-
             console.log(localStorage.getItem("token"));
-             window.location.replace("http://127.0.0.1:5500/program.html");
+            //  window.location.replace("http://127.0.0.1:5500/program.html");
+             window.location.href='index.html'
         },
         error(jqXHR, textStatus, errorThrown) {
-
+            confirm(jqXHR.responseJSON.error)
             if (jqXHR.status == 401) {
                 showNameErrorMessage("Login fail!");
             } else {
